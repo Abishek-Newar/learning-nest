@@ -2,10 +2,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service.js';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { UpdateUserDto } from './dto/update-user-dto.js';
+import { SocketService } from '../socket-service.js';
 
 @Injectable()
-export class UsersService {
-    constructor(private readonly databaseService:DatabaseService) { }
+export class UsersService  {
+    constructor(
+        private readonly databaseService:DatabaseService,
+        private readonly socketService:SocketService,
+    ) { }
     
     async findAll(role? : 'INTERN'| 'ENGINEER' | 'ADMIN'){
         if(role){
@@ -47,6 +51,7 @@ export class UsersService {
                 ...CreateUserDto
             }
         })
+        this.socketService.notifyUser('a user is created');
 
         return user;
     }
@@ -71,6 +76,7 @@ export class UsersService {
                 id:id 
             }
         })
+        this.socketService.notifyUser('a user is deleted');
 
         return deletedUser
     }
