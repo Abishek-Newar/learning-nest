@@ -42,7 +42,7 @@ export class SocketService implements OnGatewayInit, OnGatewayConnection, OnGate
 
 
     notifyUser(@MessageBody() data: string){
-        this.server.emit(data);
+        this.server.emit('notification',data);
     }
 
 }
