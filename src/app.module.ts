@@ -3,11 +3,21 @@ import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { UsersModule } from './users/users.module.js';
 import { DatabaseModule } from './database/database.module.js';
-
-
+import {ThrottlerModule, ThrottlerGuard} from '@nestjs/throttler'
+import { APP_GUARD } from '@nestjs/core';
 @Module({
-  imports: [UsersModule, DatabaseModule],
+  imports: [
+    UsersModule, 
+    DatabaseModule,
+    ThrottlerModule.forRoot([{
+      ttl: 60000,
+      limit:3
+    }])
+  ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, {
+    provide: APP_GUARD,
+    useClass: ThrottlerGuard
+  }],
 })
 export class AppModule { }
